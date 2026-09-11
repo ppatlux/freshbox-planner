@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Freshbox Plánovač</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F6F1E4;
+    --ink: #16281F;
+    --ink-soft: #4B5C51;
+    --accent: #C98A2B;
+    --accent-soft: #E9D5AE;
+    --sage: #7C9A7E;
+    --card: #FFFFFF;
+    --line: #E4DCC8;
+    --danger: #B4553A;
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 140px;
+  }
+  h1,h2,h3, .display{
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  header.top{
+    padding: 28px 20px 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  header.top .row{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  header.top h1{ font-size: 1.6rem; }
+  header.top p.sub{ margin: 4px 0 0; color: var(--ink-soft); font-size: 0.88rem; }
+  button.icon-btn{
+    background: var(--ink); color: var(--bg); border:none; border-radius: 999px;
+    width: 42px; height: 42px; font-size: 1.1rem; cursor:pointer; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    transition: transform .15s ease;
+  }
+  button.icon-btn:active{ transform: scale(0.92); }
+  .status-line{ margin-top: 10px; font-size: 0.76rem; color: var(--ink-soft); display:flex; align-items:center; gap:6px; }
+  .dot{ width:7px; height:7px; border-radius:50%; background: var(--sage); flex-shrink:0; }
+  .dot.err{ background: var(--danger); }
+  .dot.pending{ background: var(--accent); animation: pulse 1s infinite ease-in-out; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+  .weektabs{ display:flex; gap:8px; margin-top:16px; overflow-x:auto; padding-bottom:2px; }
+  .weektabs button{
+    font-family:'Space Grotesk'; font-size:0.8rem; padding:8px 14px; border-radius:999px;
+    border:1px solid var(--line); background:var(--card); color:var(--ink-soft); cursor:pointer;
+    white-space:nowrap;
+  }
+  .weektabs button.active{ background: var(--ink); color: var(--bg); border-color:var(--ink); }
+
+  main{ padding: 18px 16px 0; max-width: 640px; margin: 0 auto; }
+
+  .fallback{
+    background: var(--card); border:1px solid var(--line); border-radius: var(--radius);
+    padding: 18px; margin: 16px 0; font-size: 0.88rem; color: var(--ink-soft);
+  }
+  .fallback h3{ font-size: 1rem; color: var(--ink); margin-bottom:6px;}
+  .fallback textarea{
+    width:100%; min-height:110px; margin-top:10px; font-family: monospace; font-size:0.75rem;
+    border:1px solid var(--line); border-radius:8px; padding:8px; resize:vertical;
+  }
+  .fallback .actions{ margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
+
+  .btn{
+    font-family:'Space Grotesk'; font-weight:500; font-size:0.85rem; padding:10px 16px;
+    border-radius:999px; border:1px solid var(--ink); background:var(--ink); color:var(--bg);
+    cursor:pointer;
+  }
+  .btn.ghost{ background:transparent; color:var(--ink); }
+
+  .day-card{
+    background: var(--card); border:1px solid var(--line); border-radius: var(--radius);
+    padding: 16px; margin-bottom: 14px;
+  }
+  .day-head{ display:flex; align-items:center; gap:12px; margin-bottom: 12px; }
+  .day-badge{
+    width: 40px; height:40px; border-radius: 50%; background: var(--accent-soft);
+    color: var(--ink); display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces'; font-weight:600; font-size:0.95rem; flex-shrink:0;
+  }
+  .day-head .name{ font-family:'Fraunces'; font-size:1.15rem; font-weight:600;}
+  .day-head .date{ font-size:0.78rem; color:var(--ink-soft); }
+  .day-price{ margin-left:auto; font-family:'Fraunces'; font-weight:600; font-size:1.05rem; color: var(--accent); }
+
+  .label-row{ font-size:0.72rem; text-transform:none; color:var(--ink-soft); margin: 12px 0 6px; }
+
+  .choice-grid{ display:flex; flex-direction:column; gap:6px; }
+  .choice-option{
+    display:flex; align-items:flex-start; gap:10px; padding:9px 10px; border-radius:10px;
+    border:1px solid var(--line); cursor:pointer; font-size:0.86rem; line-height:1.32;
+  }
+  .choice-option input{ margin-top:3px; accent-color: var(--ink); flex-shrink:0; }
+  .choice-option.selected{ border-color: var(--ink); background: #FBF8F1; }
+  .choice-option .oname{ font-weight:500; }
+  .choice-option .oprice{ color:var(--ink-soft); font-size:0.76rem; }
+
+  .size-row{ display:flex; gap:8px; margin-top:8px; }
+  .size-row button{
+    flex:1; padding:8px 0; border-radius:8px; border:1px solid var(--line); background:var(--card);
+    font-family:'Space Grotesk'; font-size:0.82rem; cursor:pointer;
+  }
+  .size-row button.active{ background:var(--ink); color:var(--bg); border-color:var(--ink); }
+
+  .addons{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+  .addon{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px;
+    border:1px solid var(--line); border-radius:10px; font-size:0.85rem; cursor:pointer;
+  }
+  .addon.disabled{ opacity:0.4; pointer-events:none; }
+  .addon .left{ display:flex; align-items:center; gap:9px; }
+  .addon input{ accent-color: var(--ink); }
+  .addon .price{ color:var(--ink-soft); font-size:0.78rem; }
+
+  .summary-bar{
+    position: fixed; bottom:0; left:0; right:0; background: var(--ink); color: var(--bg);
+    padding: 14px 18px calc(14px + env(safe-area-inset-bottom)); z-index: 10;
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.15);
+  }
+  .summary-bar .inner{ max-width:640px; margin:0 auto; }
+  .summary-top{ display:flex; justify-content:space-between; align-items:baseline; }
+  .summary-top .figure{ font-family:'Fraunces'; font-size:1.5rem; font-weight:600; }
+  .summary-top .meta{ font-size:0.74rem; color:#C7D0C8; }
+  .summary-actions{ display:flex; gap:10px; margin-top:10px; }
+  .summary-actions .btn{ flex:1; text-align:center; background: var(--accent); border-color:var(--accent); color: var(--ink); font-weight:600;}
+  .summary-actions .btn.ghost2{ background:transparent; border-color:#3C4C41; color:var(--bg); font-weight:500;}
+
+  .alltime{ margin: 22px 0 10px; font-size:0.78rem; color: var(--ink-soft); text-align:center; }
+  .alltime b{ color: var(--ink); }
+
+  footer.note{
+    max-width:640px; margin: 24px auto 10px; padding: 0 16px 20px; font-size:0.72rem; color: var(--ink-soft); line-height:1.5;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="row">
+    <div>
+      <h1>Freshbox Plánovač</h1>
+      <p class="sub">Vyber si oběd na každý den, sleduj cenu, přidej do kalendáře.</p>
+    </div>
+    <button class="icon-btn" id="refreshBtn" title="Zkusit stáhnout nejnovější menu živě">⟳</button>
+  </div>
+  <div class="status-line" id="statusLine"><span class="dot pending"></span><span>Načítám menu…</span></div>
+  <div class="weektabs" id="weekTabs"></div>
+</header>
+
+<main>
+  <div id="fallbackBox" class="fallback" style="display:none;">
+    <h3>Menu se nepodařilo načíst</h3>
+    <p id="protocolWarning" style="display:none; color:var(--danger); font-weight:500;">Stránka je otevřená přímo jako lokální soubor (adresa začíná <code>file://</code>). V tom případě prohlížeč blokuje veškeré načítání souborů i síťové požadavky, takže appka nikdy nemůže fungovat takhle. Nahraj celou složku na GitHub Pages (viz README) a otevírej ji odtud jako běžnou webovou adresu (https://…).</p>
+    <p>Appka nejdřív čte <code>menu.json</code> uložený přímo v tomto repozitáři (to je nejspolehlivější cesta — nemá s tím jít nic špatně, pokud appku hostuješ přes GitHub Pages). Pokud selže i to, zkusí to živě přes web:</p>
+    <p id="fallbackDetails" style="font-family:monospace; font-size:0.7rem; color:var(--danger); word-break:break-word;"></p>
+    <div class="actions" id="pdfLinks"></div>
+    <p style="margin-top:12px;">Případně otevři <a href="https://www.freshbox.cz/tydenni-menu/" target="_blank" rel="noopener">freshbox.cz/tydenni-menu/</a>, klikni pravým tlačítkem → „Zobrazit zdrojový kód stránky", zkopíruj vše a vlož sem:</p>
+    <textarea id="pasteArea" placeholder="Sem vlož HTML zdrojový kód stránky…"></textarea>
+    <div class="actions">
+      <button class="btn" id="parsePasteBtn">Zpracovat vložené menu</button>
+      <button class="btn ghost" id="retryFetchBtn">Zkusit znovu</button>
+    </div>
+  </div>
+
+  <div id="daysContainer"></div>
+
+  <div class="alltime" id="allTimeBox" style="display:none;"></div>
+</main>
+
+<footer class="note">
+  Ceny vychází z aktuálního ceníku Freshbox: Oběd S 120 Kč · M 125 Kč · L 135 Kč · XL 145 Kč. Polévka 25 Kč k menu / 30 Kč samostatně. Dezert 49 Kč. Smoothie 79 Kč. Fresh salát 159 Kč. Menu a ceny se mohou na webu Freshbox změnit — v případě pochybností ověř na <a href="https://www.freshbox.cz/tydenni-menu/" target="_blank" rel="noopener">freshbox.cz</a>. <code>menu.json</code> se v tomto repozitáři aktualizuje automaticky (viz GitHub Action).
+</footer>
+
+<div class="summary-bar" id="summaryBar" style="display:none;">
+  <div class="inner">
+    <div class="summary-top">
+      <div>
+        <div class="figure" id="totalPrice">0 Kč</div>
+        <div class="meta" id="totalMeta">0 jídel tento týden</div>
+      </div>
+      <div class="meta" id="weekRangeLabel" style="text-align:right;"></div>
+    </div>
+    <div class="summary-actions">
+      <button class="btn" id="exportBtn">Export do kalendáře (.ics)</button>
+      <button class="btn ghost2" id="clearBtn">Vymazat týden</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const TARGET_URL = "https://www.freshbox.cz/tydenni-menu/";
+  const PRICES = { S:120, M:125, L:135, XL:145 };
+  const SOUP_WITH_MENU = 25, SOUP_ALONE = 30, DEZERT_PRICE = 49, SMOOTHIE_PRICE = 79, FRESH_SALAD_PRICE = 159;
+  const DAY_LABELS = { 'PONDĚLÍ':'Pondělí','ÚTERÝ':'Úterý','STŘEDA':'Středa','ČTVRTEK':'Čtvrtek','PÁTEK':'Pátek' };
+  const DAY_SHORT = { 'Pondělí':'Po','Úterý':'Út','Středa':'St','Čtvrtek':'Čt','Pátek':'Pá' };
+
+  const state = { weeks: [], currentWeekIndex: 0, selections: {} };
+
+  const el = id => document.getElementById(id);
+
+  // ---------- helpers ----------
+  function pad2(n){ return String(n).padStart(2, "0"); }
+  function fetchWithTimeout(url, opts, ms){
+    const ctrl = new AbortController();
+    const id = setTimeout(() => ctrl.abort(), ms);
+    return fetch(url, Object.assign({}, opts, { signal: ctrl.signal })).finally(() => clearTimeout(id));
+  }
+  function weekPdfUrl(monday){
+    const friday = new Date(monday); friday.setDate(monday.getDate() + 4);
+    const fmt = d => `${d.getFullYear()}${pad2(d.getMonth()+1)}${pad2(d.getDate())}`;
+    return `https://www.freshbox.cz/p/menu_${fmt(monday)}_${fmt(friday)}.pdf`;
+  }
+  function upcomingMondays(count){
+    const now = new Date();
+    const dow = now.getDay();
+    const diffToMonday = (dow === 0 ? -6 : 1 - dow);
+    const mondays = [];
+    for (let i = 0; i < count; i++){
+      const m = new Date(now);
+      m.setDate(now.getDate() + diffToMonday + i * 7);
+      m.setHours(0,0,0,0);
+      mondays.push(m);
+    }
+    return mondays;
+  }
+
+  // ---------- step 1: read menu.json from this same repo (guaranteed, no CORS) ----------
+  async function fetchOwnJson(){
+    const res = await fetchWithTimeout(`./menu.json?ts=${Date.now()}`, { cache: "no-store" }, 10000);
+    if (!res.ok) throw new Error("menu.json HTTP " + res.status);
+    const data = await res.json();
+    if (!data || !Array.isArray(data.weeks) || !data.weeks.length) throw new Error("menu.json empty");
+    return data;
+  }
+
+  // ---------- step 2 (optional live refresh): web sources with CORS workarounds ----------
+  const LIVE_SOURCES = [
+    { name: "jina-reader", mode: "text", ms: 20000, url: () => `https://r.jina.ai/${TARGET_URL}` },
+    { name: "codetabs", mode: "html", ms: 15000, url: () => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(TARGET_URL)}` },
+    { name: "allorigins", mode: "html", ms: 15000, url: () => `https://api.allorigins.win/raw?url=${encodeURIComponent(TARGET_URL)}` },
+    { name: "corsproxy.io", mode: "html", ms: 15000, url: () => `https://corsproxy.io/?url=${encodeURIComponent(TARGET_URL)}` },
+    { name: "direct", mode: "html", ms: 8000, url: () => TARGET_URL }
+  ];
+
+  async function fetchLive(){
+    const errors = [];
+    if (window.location.protocol === "file:"){
+      errors.push("stránka běží z file:// — fetch je v prohlížeči zablokovaný úplně, bez ohledu na zdroj.");
+    }
+    for (const src of LIVE_SOURCES){
+      try{
+        const res = await fetchWithTimeout(src.url(), { cache: "no-store" }, src.ms);
+        if (!res.ok){ errors.push(`${src.name}: HTTP ${res.status}`); continue; }
+        const text = await res.text();
+        if (!text || text.length < 400){ errors.push(`${src.name}: response too short`); continue; }
+        const weeks = src.mode === "html" ? parseWeeksFromHtml(text) : parseWeeksFromText(text);
+        if (weeks.length) return { weeks, source: src.name };
+        errors.push(`${src.name}: nothing parsed`);
+      }catch(e){ errors.push(`${src.name}: ${(e && e.message) || e}`); }
+    }
+    for (const monday of upcomingMondays(2)){
+      const pdfUrl = weekPdfUrl(monday);
+      try{
+        const res = await fetchWithTimeout(`https://r.jina.ai/${pdfUrl}`, { cache: "no-store" }, 25000);
+        if (!res.ok){ errors.push(`pdf: HTTP ${res.status}`); continue; }
+        const text = await res.text();
+        const weeks = parseWeeksFromText(text);
+        if (weeks.length) return { weeks, source: `PDF (${pdfUrl.split("/").pop()})` };
+      }catch(e){ errors.push(`pdf: ${(e && e.message) || e}`); }
+    }
+    const err = new Error("Všechny živé zdroje selhaly");
+    err.details = errors;
+    throw err;
+  }
+
+  // ---------- parsing (used by live-fetch fallback and manual paste) ----------
+  function htmlToLines(html){
+    let s = html;
+    s = s.replace(/<script[\s\S]*?<\/script>/gi, "").replace(/<style[\s\S]*?<\/style>/gi, "");
+    s = s.replace(/<(br|\/p|\/div|\/li|\/h[1-6]|\/tr|\/td|\/section|\/article)\s*>/gi, "\n");
+    s = s.replace(/<[^>]+>/g, "");
+    s = s.replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&#39;/g,"'")
+         .replace(/&quot;/g,'"').replace(/&lt;/g,"<").replace(/&gt;/g,">");
+    return s.split("\n").map(l => l.trim()).filter(Boolean);
+  }
+  function normalizeLine(line){
+    let s = line;
+    s = s.replace(/!\[[^\]]*\]\([^)]*\)/g, "");
+    s = s.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1");
+    s = s.replace(/\*\*/g, "");
+    s = s.replace(/^#+\s*/, "");
+    return s.trim();
+  }
+  function textToLines(text){ return text.split("\n").map(normalizeLine).filter(Boolean); }
+  function cleanItem(s){ return s.replace(/\|\s*[\d,]+\s*$/, "").trim(); }
+
+  function parseWeeksFromLines(lines){
+    const dayRe = /^(PONDĚLÍ|ÚTERÝ|STŘEDA|ČTVRTEK|PÁTEK)\s+(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/i;
+    const weeks = [];
+    let curWeek = null, curDay = null;
+    function pushDay(){ if (curDay && curWeek) curWeek.days.push(curDay); curDay = null; }
+    function pushWeek(){ pushDay(); if (curWeek && curWeek.days.length) weeks.push(curWeek); curWeek = null; }
+    for (const line of lines){
+      const dm = line.match(dayRe);
+      if (dm){
+        const key = dm[1].toUpperCase();
+        if (key === "PONDĚLÍ"){ pushWeek(); curWeek = { days: [] }; }
+        if (!curWeek) curWeek = { days: [] };
+        pushDay();
+        const d = parseInt(dm[2],10), m = parseInt(dm[3],10), y = parseInt(dm[4],10);
+        const iso = `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+        curDay = { date: iso, dayName: DAY_LABELS[key] || key, soup: null, lunches: [], dessert: null, freshSalad: null };
+        continue;
+      }
+      if (!curDay) continue;
+      let mm;
+      if ((mm = line.match(/^Pol[eé]vka\b\s*(.*)$/i))) { curDay.soup = cleanItem(mm[1]) || curDay.soup; }
+      else if ((mm = line.match(/^Ob[eě]d\s*([1-4])\b\s*(.*)$/i))) { curDay.lunches.push({ id: "obed" + mm[1], name: cleanItem(mm[2]) }); }
+      else if ((mm = line.match(/^Dezert\b\s*(.*)$/i))) { curDay.dessert = cleanItem(mm[1]) || curDay.dessert; }
+      else if ((mm = line.match(/^Fresh sal[aá]t\b\s*(.*)$/i))) { curDay.freshSalad = cleanItem(mm[1]) || "Fresh salát"; }
+    }
+    pushWeek();
+    return weeks.filter(w => w.days.length >= 3);
+  }
+  function parseWeeksFromHtml(html){ return parseWeeksFromLines(htmlToLines(html).map(normalizeLine)); }
+  function parseWeeksFromText(text){ return parseWeeksFromLines(textToLines(text)); }
+
+  // ---------- storage ----------
+  function selKey(weekMonday){ return `freshbox_sel_${weekMonday}`; }
+  function loadSelections(weekMonday){ try{ return JSON.parse(localStorage.getItem(selKey(weekMonday))) || {}; }catch(e){ return {}; } }
+  function saveSelections(weekMonday, sel){ try{ localStorage.setItem(selKey(weekMonday), JSON.stringify(sel)); }catch(e){} }
+  function cacheMenu(weeks){ try{ localStorage.setItem("freshbox_menu_cache", JSON.stringify({ ts: Date.now(), weeks })); }catch(e){} }
+  function loadCachedMenu(){ try{ const raw = JSON.parse(localStorage.getItem("freshbox_menu_cache")); return raw && raw.weeks && raw.weeks.length ? raw : null; }catch(e){ return null; } }
+  function allStoredWeekKeys(){
+    const keys = [];
+    for (let i=0;i<localStorage.length;i++){ const k = localStorage.key(i); if (k && k.startsWith("freshbox_sel_")) keys.push(k); }
+    return keys;
+  }
+
+  // ---------- pricing ----------
+  function dayPrice(sel){
+    if (!sel) return 0;
+    let total = 0, hasMenu = false;
+    if (sel.choice && sel.choice.startsWith("obed")){ total += PRICES[sel.size || "M"]; hasMenu = true; }
+    else if (sel.choice === "freshsalad"){ total += FRESH_SALAD_PRICE; }
+    if (sel.soup) total += hasMenu ? SOUP_WITH_MENU : SOUP_ALONE;
+    if (sel.dezert) total += DEZERT_PRICE;
+    if (sel.smoothie) total += SMOOTHIE_PRICE;
+    return total;
+  }
+
+  // ---------- current week selection ----------
+  function pickDefaultWeekIndex(weeks){
+    const today = new Date().toISOString().slice(0,10);
+    for (let i=0;i<weeks.length;i++){
+      const w = weeks[i];
+      if (today >= w.days[0].date && today <= w.days[w.days.length-1].date) return i;
+    }
+    let bestIdx = -1, bestDate = null;
+    weeks.forEach((w,i) => { if (w.days[0].date >= today && (!bestDate || w.days[0].date < bestDate)){ bestDate = w.days[0].date; bestIdx = i; } });
+    return bestIdx >= 0 ? bestIdx : 0;
+  }
+
+  // ---------- rendering ----------
+  function setStatus(kind, text){ el("statusLine").innerHTML = `<span class="dot ${kind}"></span><span>${text}</span>`; }
+
+  function renderWeekTabs(){
+    const box = el("weekTabs");
+    box.innerHTML = "";
+    if (state.weeks.length < 2) return;
+    state.weeks.forEach((w, i) => {
+      const btn = document.createElement("button");
+      const first = w.days[0], last = w.days[w.days.length-1];
+      btn.textContent = `${first.date.slice(8)}.${first.date.slice(5,7)}–${last.date.slice(8)}.${last.date.slice(5,7)}`;
+      if (i === state.currentWeekIndex) btn.classList.add("active");
+      btn.onclick = () => { state.currentWeekIndex = i; loadCurrentWeekSelections(); renderDays(); renderSummary(); renderWeekTabs(); };
+      box.appendChild(btn);
+    });
+  }
+
+  function loadCurrentWeekSelections(){
+    const week = state.weeks[state.currentWeekIndex];
+    if (!week) return;
+    state.selections = loadSelections(week.days[0].date);
+  }
+  function ensureSel(date){
+    if (!state.selections[date]) state.selections[date] = { choice:"none", size:"M", soup:false, dezert:false, smoothie:false };
+    return state.selections[date];
+  }
+  function persistCurrent(){
+    const week = state.weeks[state.currentWeekIndex];
+    if (!week) return;
+    saveSelections(week.days[0].date, state.selections);
+  }
+
+  function renderDays(){
+    const week = state.weeks[state.currentWeekIndex];
+    const container = el("daysContainer");
+    container.innerHTML = "";
+    if (!week) return;
+
+    week.days.forEach(day => {
+      const sel = ensureSel(day.date);
+      const card = document.createElement("div");
+      card.className = "day-card";
+
+      const head = document.createElement("div");
+      head.className = "day-head";
+      head.innerHTML = `
+        <div class="day-badge">${DAY_SHORT[day.dayName] || day.dayName.slice(0,2)}</div>
+        <div>
+          <div class="name">${day.dayName}</div>
+          <div class="date">${day.date.split("-").reverse().join(".")}</div>
+        </div>
+        <div class="day-price" data-price-for="${day.date}">${dayPrice(sel)} Kč</div>
+      `;
+      card.appendChild(head);
+
+      const label1 = document.createElement("div");
+      label1.className = "label-row";
+      label1.textContent = "Oběd";
+      card.appendChild(label1);
+
+      const grid = document.createElement("div");
+      grid.className = "choice-grid";
+
+      function makeOption(value, name, priceNote){
+        const opt = document.createElement("label");
+        opt.className = "choice-option" + (sel.choice === value ? " selected" : "");
+        opt.innerHTML = `<input type="radio" name="choice_${day.date}" value="${value}" ${sel.choice===value?"checked":""}>
+          <div><div class="oname">${name}</div>${priceNote ? `<div class="oprice">${priceNote}</div>` : ""}</div>`;
+        opt.querySelector("input").addEventListener("change", () => { sel.choice = value; persistCurrent(); renderDays(); renderSummary(); });
+        return opt;
+      }
+
+      grid.appendChild(makeOption("none", "Žádný oběd"));
+      day.lunches.forEach(l => grid.appendChild(makeOption(l.id, l.name, "od 120 do 145 Kč podle velikosti")));
+      if (day.freshSalad) grid.appendChild(makeOption("freshsalad", day.freshSalad, `${FRESH_SALAD_PRICE} Kč`));
+      card.appendChild(grid);
+
+      if (sel.choice && sel.choice.startsWith("obed")){
+        const sizeRow = document.createElement("div");
+        sizeRow.className = "size-row";
+        ["S","M","L","XL"].forEach(sz => {
+          const b = document.createElement("button");
+          b.textContent = `${sz} · ${PRICES[sz]}`;
+          if (sel.size === sz) b.classList.add("active");
+          b.onclick = () => { sel.size = sz; persistCurrent(); renderDays(); renderSummary(); };
+          sizeRow.appendChild(b);
+        });
+        card.appendChild(sizeRow);
+      }
+
+      const addons = document.createElement("div");
+      addons.className = "addons";
+      function makeAddon(key, label, price, available){
+        const row = document.createElement("label");
+        row.className = "addon" + (available ? "" : " disabled");
+        const priceLabel = key === "soup" ? (sel.choice && sel.choice.startsWith("obed") ? `${SOUP_WITH_MENU} Kč` : `${SOUP_ALONE} Kč`) : `${price} Kč`;
+        row.innerHTML = `<span class="left"><input type="checkbox" ${sel[key]?"checked":""}> ${label}</span><span class="price">${priceLabel}</span>`;
+        row.querySelector("input").addEventListener("change", (e) => { sel[key] = e.target.checked; persistCurrent(); renderDays(); renderSummary(); });
+        return row;
+      }
+      addons.appendChild(makeAddon("soup", day.soup ? `Polévka — ${day.soup}` : "Polévka", null, !!day.soup));
+      addons.appendChild(makeAddon("dezert", day.dessert ? `Dezert — ${day.dessert}` : "Dezert", DEZERT_PRICE, !!day.dessert));
+      addons.appendChild(makeAddon("smoothie", "Smoothie 300ml", SMOOTHIE_PRICE, true));
+      card.appendChild(addons);
+
+      container.appendChild(card);
+    });
+  }
+
+  function renderSummary(){
+    const week = state.weeks[state.currentWeekIndex];
+    const bar = el("summaryBar");
+    if (!week){ bar.style.display = "none"; return; }
+    bar.style.display = "block";
+    let total = 0, meals = 0, soups = 0, dezerts = 0, smoothies = 0;
+    week.days.forEach(day => {
+      const sel = state.selections[day.date];
+      if (!sel) return;
+      total += dayPrice(sel);
+      if (sel.choice && sel.choice !== "none") meals++;
+      if (sel.soup) soups++;
+      if (sel.dezert) dezerts++;
+      if (sel.smoothie) smoothies++;
+    });
+    el("totalPrice").textContent = `${total} Kč`;
+    el("totalMeta").textContent = `${meals} obědů · ${soups} polévek · ${dezerts} dezertů · ${smoothies} smoothie`;
+    const first = week.days[0], last = week.days[week.days.length-1];
+    el("weekRangeLabel").textContent = `${first.date.split("-").reverse().join(".")} – ${last.date.split("-").reverse().join(".")}`;
+    week.days.forEach(day => {
+      const elp = document.querySelector(`[data-price-for="${day.date}"]`);
+      if (elp) elp.textContent = `${dayPrice(state.selections[day.date])} Kč`;
+    });
+    renderAllTime();
+  }
+
+  function renderAllTime(){
+    const keys = allStoredWeekKeys();
+    if (keys.length <= 1){ el("allTimeBox").style.display = "none"; return; }
+    let total = 0, meals = 0;
+    keys.forEach(k => {
+      try{
+        const sels = JSON.parse(localStorage.getItem(k)) || {};
+        Object.values(sels).forEach(sel => { total += dayPrice(sel); if (sel.choice && sel.choice !== "none") meals++; });
+      }catch(e){}
+    });
+    const box = el("allTimeBox");
+    box.style.display = "block";
+    box.innerHTML = `Celkem za všechny uložené týdny: <b>${meals} obědů</b>, <b>${total} Kč</b>`;
+  }
+
+  // ---------- ICS export ----------
+  function pad(n){ return String(n).padStart(2,"0"); }
+  function icsDate(dateISO, hh, mm){ const [y,mo,d] = dateISO.split("-"); return `${y}${mo}${d}T${pad(hh)}${pad(mm)}00`; }
+  function escapeICS(s){ return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n"); }
+  function buildICS(week){
+    let out = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Freshbox Planner//CZ\r\nCALSCALE:GREGORIAN\r\n";
+    const dtstamp = new Date().toISOString().replace(/[-:]/g,"").split(".")[0] + "Z";
+    week.days.forEach(day => {
+      const sel = state.selections[day.date];
+      if (!sel) return;
+      const hasChoice = sel.choice && sel.choice !== "none";
+      if (!hasChoice && !sel.soup && !sel.dezert && !sel.smoothie) return;
+      let itemName = "";
+      if (sel.choice && sel.choice.startsWith("obed")){ const l = day.lunches.find(x => x.id === sel.choice); itemName = l ? l.name : sel.choice; }
+      else if (sel.choice === "freshsalad"){ itemName = day.freshSalad || "Fresh salát"; }
+      const parts = [];
+      if (itemName) parts.push((sel.choice.startsWith("obed") ? `Oběd (${sel.size}): ` : "Fresh salát: ") + itemName);
+      if (sel.soup && day.soup) parts.push("Polévka: " + day.soup);
+      if (sel.dezert && day.dessert) parts.push("Dezert: " + day.dessert);
+      if (sel.smoothie) parts.push("Smoothie 300ml");
+      parts.push(`Cena: ${dayPrice(sel)} Kč`);
+      const summary = itemName ? `Freshbox: ${itemName}` : "Freshbox objednávka";
+      out += "BEGIN:VEVENT\r\n";
+      out += `UID:freshbox-${day.date}@freshbox-planner\r\n`;
+      out += `DTSTAMP:${dtstamp}\r\n`;
+      out += `DTSTART:${icsDate(day.date,12,0)}\r\n`;
+      out += `DTEND:${icsDate(day.date,12,30)}\r\n`;
+      out += `SUMMARY:${escapeICS(summary)}\r\n`;
+      out += `DESCRIPTION:${escapeICS(parts.join("\n"))}\r\n`;
+      out += "END:VEVENT\r\n";
+    });
+    out += "END:VCALENDAR\r\n";
+    return out;
+  }
+  function exportICS(){
+    const week = state.weeks[state.currentWeekIndex];
+    if (!week) return;
+    const ics = buildICS(week);
+    const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `freshbox-${week.days[0].date}.ics`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  // ---------- boot ----------
+  function applyWeeks(weeks, sourceLabel, extraMeta){
+    if (!weeks || !weeks.length) throw new Error("no weeks parsed");
+    state.weeks = weeks;
+    state.currentWeekIndex = pickDefaultWeekIndex(weeks);
+    loadCurrentWeekSelections();
+    cacheMenu(weeks);
+    el("fallbackBox").style.display = "none";
+    setStatus("", `Menu: ${sourceLabel}${extraMeta ? " · " + extraMeta : ""}`);
+    renderWeekTabs();
+    renderDays();
+    renderSummary();
+  }
+
+  function showFallback(err){
+    setStatus("err", "Menu se nepodařilo načíst.");
+    el("fallbackBox").style.display = "block";
+    const details = (err && err.details && err.details.length) ? err.details.join(" · ") : ((err && err.message) || String(err));
+    el("fallbackDetails").textContent = details;
+    el("protocolWarning").style.display = (window.location.protocol === "file:") ? "block" : "none";
+    const pdfBox = el("pdfLinks");
+    pdfBox.innerHTML = "";
+    upcomingMondays(2).map(weekPdfUrl).forEach((url, i) => {
+      const a = document.createElement("a");
+      a.href = url; a.target = "_blank"; a.rel = "noopener"; a.className = "btn ghost";
+      a.textContent = i === 0 ? "Otevřít PDF (tento týden)" : "Otevřít PDF (příští týden)";
+      pdfBox.appendChild(a);
+    });
+  }
+
+  async function boot(){
+    setStatus("pending", "Načítám menu…");
+    // 1) own menu.json — same-origin, this is the reliable path
+    try{
+      const data = await fetchOwnJson();
+      const when = data.fetched_at ? new Date(data.fetched_at).toLocaleString("cs-CZ", {day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}) : "";
+      applyWeeks(data.weeks, "menu.json v repozitáři", when ? `aktualizováno ${when}` : "");
+      return;
+    }catch(e){ /* fall through to live fetch */ }
+
+    // 2) live fetch straight from the browser (bonus, not required to work)
+    try{
+      const { weeks, source } = await fetchLive();
+      applyWeeks(weeks, `živě (${source})`);
+      return;
+    }catch(liveErr){
+      // 3) last resort: previously cached menu in this browser
+      const cached = loadCachedMenu();
+      if (cached){
+        applyWeeks(cached.weeks, `z mezipaměti (${new Date(cached.ts).toLocaleDateString("cs-CZ")})`);
+        setStatus("err", "Nepodařilo se načíst nové menu, zobrazuji uloženou verzi.");
+      } else {
+        showFallback(liveErr);
+      }
+    }
+  }
+
+  function refreshLive(){
+    setStatus("pending", "Zkouším živé zdroje…");
+    fetchLive().then(({weeks, source}) => applyWeeks(weeks, `živě (${source})`)).catch(showFallback);
+  }
+
+  el("refreshBtn").addEventListener("click", refreshLive);
+  el("retryFetchBtn").addEventListener("click", boot);
+  el("parsePasteBtn").addEventListener("click", () => {
+    const html = el("pasteArea").value;
+    if (!html || html.length < 200){ alert("Vlož prosím celý HTML zdrojový kód stránky."); return; }
+    try{
+      const weeks = parseWeeksFromHtml(html);
+      if (!weeks.length) throw new Error("no weeks found");
+      applyWeeks(weeks, "vloženo ručně");
+    }catch(e){
+      alert("Nepodařilo se rozpoznat menu ve vloženém textu. Zkontroluj, že jde o kompletní zdrojový kód stránky.");
+    }
+  });
+  el("exportBtn").addEventListener("click", exportICS);
+  el("clearBtn").addEventListener("click", () => {
+    const week = state.weeks[state.currentWeekIndex];
+    if (!week) return;
+    if (!confirm("Vymazat všechny volby pro tento týden?")) return;
+    state.selections = {};
+    saveSelections(week.days[0].date, state.selections);
+    renderDays();
+    renderSummary();
+  });
+
+  boot();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+name: Update Freshbox menu
+
+on:
+  schedule:
+    # Runs server-side on GitHub's machines, so freshbox.cz's lack of CORS
+    # headers is irrelevant here -- this is a plain server-to-server request.
+    - cron: "0 5 * * 1,4"   # Monday & Thursday 05:00 UTC (new weekly menus usually post by Monday, sometimes updated later)
+  workflow_dispatch: {}      # lets you trigger it manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update-menu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests html2text
+
+      - name: Fetch and parse menu
+        run: python scripts/fetch_menu.py
+
+      - name: Commit menu.json if it changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add menu.json
+          git diff --staged --quiet || git commit -m "Update weekly menu"
+          git push
