@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-05T12:01:11.228521+00:00",
+  "fetched_at": "2026-10-08T11:45:43.839471+00:00",
   "weeks": [
     {
       "days": [
@@ -106,7 +106,7 @@
         {
           "date": "2026-10-09",
           "dayName": "Pátek",
-          "soup": "200g",
+          "soup": "frankfurtská s uzeninou",
           "lunches": [
             {
               "id": "obed1",
@@ -126,6 +126,135 @@
             }
           ],
           "dessert": "řecký jogurt s oříšky a medem",
+          "freshSalad": "s kuřecím masem, rajčátky, paprikou, kukuřicí a pikantním dresinkem"
+        }
+      ]
+    },
+    {
+      "days": [
+        {
+          "date": "2026-10-12",
+          "dayName": "Pondělí",
+          "soup": "krémová hrášková",
+          "lunches": [
+            {
+              "id": "obed1",
+              "name": "kuřecí nudličky v hořčičné omáčce, bramborovo celerové pyré"
+            },
+            {
+              "id": "obed2",
+              "name": "těstovinový salát s kousky uzeného lososa, zeleninou, saláty a citronovo koprovým dresinkem"
+            },
+            {
+              "id": "obed3",
+              "name": "gnocchi s listovým špenátem, hříbky, smetanou a sýrem gran moravia"
+            },
+            {
+              "id": "obed4",
+              "name": "řecké fazole zapečené s rajčaty, mozzarellou a černými olivami, slunečnicový chléb"
+            }
+          ],
+          "dessert": "jogurtový dezert s mascarpone, borůvkami a ostružinami",
+          "freshSalad": null
+        },
+        {
+          "date": "2026-10-13",
+          "dayName": "Úterý",
+          "soup": "kulajda s koprem a vajíčkem",
+          "lunches": [
+            {
+              "id": "obed1",
+              "name": "indická kuřecí korma s kešu oříšky a kokosovým mlékem, jasmínová rýže"
+            },
+            {
+              "id": "obed2",
+              "name": "jelení guláš na pivu, karlovarský knedlík"
+            },
+            {
+              "id": "obed3",
+              "name": "mrkvové karbanátky s jogurtovým dipem, šťouchané brambory"
+            },
+            {
+              "id": "obed4",
+              "name": "těstoviny penne se sicilskou omáčkou s rajčaty, lilkem a ricottou"
+            }
+          ],
+          "dessert": "vanilkový jogurt s jahodovým pyré",
+          "freshSalad": null
+        },
+        {
+          "date": "2026-10-14",
+          "dayName": "Středa",
+          "soup": "květáková s petrželkou",
+          "lunches": [
+            {
+              "id": "obed1",
+              "name": "kuřecí nudličky v liškové omáčce s petrželkou, švábské špecle"
+            },
+            {
+              "id": "obed2",
+              "name": "kořeněné mleté hovězí maso s rajčaty, pečenými bramborami a čedarem"
+            },
+            {
+              "id": "obed3",
+              "name": "cuketové rizoto s pancettou, smetanou a sýrem gran moravia"
+            },
+            {
+              "id": "obed4",
+              "name": "cizrnové karí s batáty, rajčaty a kokosovým mlékem, pita chléb"
+            }
+          ],
+          "dessert": "pistáciový termix s praženými oříšky",
+          "freshSalad": null
+        },
+        {
+          "date": "2026-10-15",
+          "dayName": "Čtvrtek",
+          "soup": "krémová zeleninová s kapustou",
+          "lunches": [
+            {
+              "id": "obed1",
+              "name": "toskánské kuře se sušenými rajčaty, špenátem a smetanou, rýže basmati"
+            },
+            {
+              "id": "obed2",
+              "name": "kachní prsíčka se zázvorem a medem, čínskými nudlemi, salátem a omáčkou hoisin"
+            },
+            {
+              "id": "obed3",
+              "name": "dýňové lasagne se salsicciou, gorgonzolou a vlašskými ořechy"
+            },
+            {
+              "id": "obed4",
+              "name": "domácí halušky s bryndzou a restovanou červenou řepou"
+            }
+          ],
+          "dessert": "chia puding s kokosem a mangem",
+          "freshSalad": null
+        },
+        {
+          "date": "2026-10-16",
+          "dayName": "Pátek",
+          "soup": "200g",
+          "lunches": [
+            {
+              "id": "obed1",
+              "name": "špagety s kuřecími nudličkami s rajčatovo smetanovou omáčkou a sýrem gran moravia"
+            },
+            {
+              "id": "obed2",
+              "name": "tortilla s pomalu pečeným trhaným vepřovým masem, saláty, zeleninou a dresinkem z modrého sýra"
+            },
+            {
+              "id": "obed3",
+              "name": "makové šulánky se švestkovou omáčkou a zakysanou smetanou"
+            },
+            {
+              "id": "obed4",
+              "name": "čočka nakyselo s vařeným vajíčkem, lámankový chléb"
+            }
+          ],
+          "dessert": "jablečný crumble s lesním ovocem, datlemi a mandlovými lupínky",
           "freshSalad": "Fresh salát"
         }
       ]
