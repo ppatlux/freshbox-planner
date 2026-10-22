@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-10-19T10:29:14.247231+00:00",
+  "fetched_at": "2026-10-22T09:49:21.270666+00:00",
   "weeks": [
     {
       "days": [
@@ -106,7 +106,7 @@
         {
           "date": "2026-10-23",
           "dayName": "Pátek",
-          "soup": "200g",
+          "soup": "zelňačka s uzeninou a smetanou",
           "lunches": [
             {
               "id": "obed1",
@@ -126,6 +126,118 @@
             }
           ],
           "dessert": "banánový koláč s ořechy a čokoládou",
+          "freshSalad": "Caesar s kuřecím masem, listovými saláty, krutony, dresinkem a sýrem gran moravia"
+        }
+      ]
+    },
+    {
+      "days": [
+        {
+          "date": "2026-10-26",
+          "dayName": "Pondělí",
+          "soup": "krémová dýňová s chilli",
+          "lunches": [
+            {
+              "id": "obed1",
+              "name": "restované kuřecí nudličky s krémovým bulgurem se špenátem"
+            },
+            {
+              "id": "obed2",
+              "name": "tortilla plněná mletým hovězím masem, zeleninou a sýrem"
+            },
+            {
+              "id": "obed3",
+              "name": "zelené fazolky na smetaně s vajíčkem, šťouchané brambory"
+            },
+            {
+              "id": "obed4",
+              "name": "řecký těstovinový salát se zeleninou, olivami kalamata a sýrem feta"
+            }
+          ],
+          "dessert": "mangové pyré se zakysanou smetanou",
+          "freshSalad": null
+        },
+        {
+          "date": "2026-10-27",
+          "dayName": "Úterý",
+          "soup": "rajská s rýží a bazalkou",
+          "lunches": [
+            {
+              "id": "obed1",
+              "name": "arabský kotlík s kuřecím masem, čočkou a granátovým jablkem, rýže basmati"
+            },
+            {
+              "id": "obed2",
+              "name": "krůtí prsíčka s hříbkovou omáčkou, domácí dýňové nočky"
+            },
+            {
+              "id": "obed3",
+              "name": "cuketové lasagne se šunkou, ricottou a bazalkou"
+            },
+            {
+              "id": "obed4",
+              "name": "salát s kuskusem, pečenou červenou řepou, listovými saláty a balkánským sýrem"
+            }
+          ],
+          "dessert": "tvarohový dezert s borůvkami",
+          "freshSalad": null
+        },
+        {
+          "date": "2026-10-28",
+          "dayName": "Středa",
+          "soup": "STÁTNÍ SVÁTEK",
+          "lunches": [],
+          "dessert": null,
+          "freshSalad": null
+        },
+        {
+          "date": "2026-10-29",
+          "dayName": "Čtvrtek",
+          "soup": "fazolová se zeleninou",
+          "lunches": [
+            {
+              "id": "obed1",
+              "name": "indické kuře tikka masala s kokosovým mlékem a rajčaty, jasmínová rýže"
+            },
+            {
+              "id": "obed2",
+              "name": "vepřová panenka se šípkovou omáčkou s tymiánem, švábské špecle"
+            },
+            {
+              "id": "obed3",
+              "name": "květákové placičky se sýrem a petrželkou, bramborová kaše"
+            },
+            {
+              "id": "obed4",
+              "name": "jáhlový nákyp s tvarohem, malinami a vanilkou"
+            }
+          ],
+          "dessert": "chia puding s jablíčky se skořicí a praženými mandlemi",
+          "freshSalad": null
+        },
+        {
+          "date": "2026-10-30",
+          "dayName": "Pátek",
+          "soup": "200g",
+          "lunches": [
+            {
+              "id": "obed1",
+              "name": "kuře na paprice se smetanou, karlovarský knedlík"
+            },
+            {
+              "id": "obed2",
+              "name": "grilovaný sýr camembert s pečenými bramborami, listovými saláty a brusinkovou omáčkou"
+            },
+            {
+              "id": "obed3",
+              "name": "krémové rizoto s artyčoky, sušenými rajčaty, smetanou a sýrem gran moravia"
+            },
+            {
+              "id": "obed4",
+              "name": "restované žampiony s tymiánem a kaší z červené čočky"
+            }
+          ],
+          "dessert": "citrónový koláč s kokosem a mákem",
           "freshSalad": "Fresh salát"
         }
       ]
